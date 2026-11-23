@@ -1,0 +1,32 @@
+baseURL = "https://fotos.freudenau.de/"
+locale = "de-DE"
+defaultContentLanguage = "de"
+title = "Fotos · freudenau.de"
+
+# No taxonomies, RSS or sitemap noise for a pure gallery
+disableKinds = ["taxonomy", "term", "rss"]
+
+[params]
+  author = "Jens Freudenau"
+  description = "Fundstücke aus Berlin und Bilder aus Parks wie Tiergarten und Sanssouci."
+  # Link back to the main site (shown in header and footer)
+  mainSiteURL = "https://freudenau.de/"
+  mainSiteLabel = "freudenau.de"
+
+  # Image sizes (long edge in px). Originals are never published.
+  thumbWidth = 640
+  largeWidth = 2400
+  quality = 82
+
+[imaging]
+  resampleFilter = "CatmullRom"
+  [imaging.webp]
+    quality = 82
+  # Strip all metadata from generated images (no GPS, no serial numbers)
+  # Hugo writes processed images without EXIF by default.
+
+[markup.goldmark.renderer]
+  unsafe = false
+
+[minify]
+  minifyOutput = true

@@ -1,0 +1,6 @@
+{{ define "main" }}
+  <section class="intro">
+    {{ .Content }}
+  </section>
+  {{ partial "album-cards.html" .Pages.ByTitle }}
+{{ end }}

@@ -1,0 +1,57 @@
+{{- /*
+  Justified photo grid for an album (leaf bundle).
+  Images are sorted by EXIF capture date; order set via front matter "sort" (asc|desc, default desc).
+  Caption / alt text, first match wins:
+    1. front matter "resources" -> params.caption
+    2. IPTC Caption-Abstract (Beschreibung aus Lightroom/Photomator/Capture One)
+    3. EXIF ImageDescription (Beschreibung aus Apple Fotos)
+    4. IPTC ObjectName (Titel)
+  Alt text falls back further to a readable file name (camera names like DSCF1234 are skipped)
+  and finally to "<Album> · <Datum>".
+*/ -}}
+{{- $albumTitle := .Title -}}
+{{- $items := slice -}}
+{{- range .Resources.ByType "image" -}}
+  {{- $date := time.AsTime "0001-01-01" -}}
+  {{- if reflect.IsImageResourceWithMeta . -}}{{- with .Meta -}}{{- if not .Date.IsZero -}}{{- $date = .Date -}}{{- end -}}{{- end -}}{{- end -}}
+  {{- $items = $items | append (dict "img" . "date" $date "name" .Name) -}}
+{{- end -}}
+{{- $order := .Params.sort | default "desc" -}}
+{{- $items = sort $items "date" $order -}}
+
+{{- $tw := site.Params.thumbWidth -}}
+{{- $lw := site.Params.largeWidth -}}
+{{- $q := site.Params.quality -}}
+
+<div class="grid" data-lightbox>
+  {{- range $items -}}
+    {{- $img := .img -}}
+    {{- $thumb := $img.Process (printf "fit %dx%d webp q%d" $tw $tw $q) -}}
+    {{- $large := $img.Process (printf "fit %dx%d webp q%d" $lw $lw $q) -}}
+    {{- $caption := $img.Params.caption -}}
+    {{- if and (not $caption) (reflect.IsImageResourceWithMeta $img) -}}
+      {{- $iptc := $img.Meta.IPTC | default dict -}}
+      {{- $exif := $img.Meta.Exif | default dict -}}
+      {{- $caption = or (index $iptc "Caption-Abstract") (index $exif "ImageDescription") (index $iptc "ObjectName") "" | strings.TrimSpace -}}
+    {{- end -}}
+    {{- $dateLabel := "" -}}
+    {{- if not .date.IsZero -}}{{- $dateLabel = .date | time.Format ":date_long" -}}{{- end -}}
+    {{- $alt := $caption -}}
+    {{- if not $alt -}}
+      {{- $base := path.BaseName $img.Name -}}
+      {{- if not (findRE `^(?i)((dscf?|img|xt\d?s|_?dsc|p\d{3}|pxl|r\d{3})[_-]?\d+|[0-9a-f]{8}-[0-9a-f]{4}-)` $base) -}}
+        {{- $alt = $base | replaceRE `[-_]+` " " | replaceRE `\s+-?\s*\d+$` "" | strings.TrimSpace -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $alt -}}
+      {{- $alt = $albumTitle -}}{{- with $dateLabel -}}{{- $alt = printf "%s · %s" $alt . -}}{{- end -}}
+    {{- end -}}
+    <a class="tile" href="{{ $large.RelPermalink }}"
+       style="--ar: {{ div (float $thumb.Width) $thumb.Height }}"
+       data-width="{{ $large.Width }}" data-height="{{ $large.Height }}"
+       data-caption="{{ with $caption }}{{ . }}{{ end }}{{ if and $caption $dateLabel }} · {{ end }}{{ $dateLabel }}">
+      <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}"
+           alt="{{ $alt }}" loading="lazy" decoding="async">
+    </a>
+  {{- end -}}
+</div>

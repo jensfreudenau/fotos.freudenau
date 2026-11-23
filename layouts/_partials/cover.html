@@ -1,0 +1,15 @@
+{{- /*
+  Returns the cover image for a page:
+  - album (leaf bundle): front matter "cover" or first image by name
+  - section: cover of its newest album
+*/ -}}
+{{- $cover := false -}}
+{{- if .IsPage -}}
+  {{- with .Params.cover -}}{{- $cover = $.Resources.GetMatch . -}}{{- end -}}
+  {{- if not $cover -}}{{- $cover = index (.Resources.ByType "image") 0 -}}{{- end -}}
+{{- else -}}
+  {{- range .RegularPagesRecursive.ByDate.Reverse -}}
+    {{- if not $cover -}}{{- $cover = partial "cover.html" . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $cover -}}

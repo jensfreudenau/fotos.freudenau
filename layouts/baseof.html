@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale | default "de-DE" }}">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="{{ "/" | relURL }}">Fotos</a>
+    <nav>
+      {{ range site.Home.Pages.ByTitle }}
+        <a href="{{ .RelPermalink }}"{{ if or (eq $.RelPermalink .RelPermalink) ($.IsDescendant .) }} aria-current="page"{{ end }}>{{ .Title }}</a>
+      {{ end }}
+      <a class="main-site" href="{{ site.Params.mainSiteURL }}">{{ site.Params.mainSiteLabel }} →</a>
+    </nav>
+  </header>
+
+  <main>
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  <footer class="site-footer">
+    <p>© {{ now.Year }} {{ site.Params.author }} · <a href="{{ site.Params.mainSiteURL }}">{{ site.Params.mainSiteLabel }}</a></p>
+  </footer>
+
+  {{ $js := resources.Get "js/lightbox.js" | js.Build (dict "minify" true) | fingerprint }}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+</body>
+</html>

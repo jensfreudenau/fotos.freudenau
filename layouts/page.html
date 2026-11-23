@@ -1,0 +1,8 @@
+{{ define "main" }}
+  <header class="page-header">
+    {{ with .Parent }}{{ if not .IsHome }}<a class="back" href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}{{ end }}
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+  </header>
+  {{ partial "image-grid.html" . }}
+{{ end }}

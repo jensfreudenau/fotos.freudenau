@@ -1,0 +1,160 @@
+/* fotos.freudenau.de – adjust the variables to match freudenau.de */
+:root {
+  --bg: #f6f5f2;
+  --fg: #1c1c1c;
+  --muted: #77746e;
+  --line: #dedbd4;
+  --font: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --row-height: 260px;   /* target row height of the photo grid */
+  --gap: 6px;
+  --max: 1600px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #141414; --fg: #e9e7e2; --muted: #9a968e; --line: #2c2b29; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.55 var(--font);
+}
+
+a { color: inherit; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+/* Header / footer */
+.site-header, .site-footer, main {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem 2rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.site-title {
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-decoration: none;
+}
+
+.site-header nav { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font-size: .95rem; }
+.site-header nav a { text-decoration: none; color: var(--muted); }
+.site-header nav a:hover, .site-header nav a[aria-current] { color: var(--fg); }
+.site-header .main-site { margin-left: .5rem; }
+
+.site-footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+/* Page header */
+.intro, .page-header { max-width: 44rem; margin-bottom: 2rem; }
+.page-header h1 { font-size: 1.6rem; font-weight: 600; margin: .25rem 0 .5rem; }
+.page-header p, .intro p { color: var(--muted); margin: 0 0 .75rem; }
+.back { color: var(--muted); text-decoration: none; font-size: .9rem; }
+.back:hover { color: var(--fg); }
+
+/* Album / section cards */
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem 1.25rem;
+}
+.card a { display: block; text-decoration: none; }
+.card img, .card-empty { aspect-ratio: 4 / 3; width: 100%; object-fit: cover; background: var(--line); }
+.card a:hover img { opacity: .88; }
+.card-title { display: block; margin-top: .6rem; font-weight: 600; }
+.card-meta { display: block; color: var(--muted); font-size: .85rem; }
+
+/* Justified photo grid: every tile grows proportionally to its aspect ratio (--ar) */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+}
+.grid::after {          /* keeps the last row from stretching */
+  content: "";
+  flex-grow: 999;
+}
+.tile {
+  flex-grow: calc(var(--ar) * 100);
+  flex-basis: calc(var(--ar) * var(--row-height));
+  aspect-ratio: var(--ar);
+  max-height: calc(var(--row-height) * 1.6);
+  background: var(--line);
+  overflow: hidden;
+}
+.tile img { width: 100%; height: 100%; object-fit: cover; transition: opacity .2s; }
+.tile:hover img { opacity: .88; }
+
+@media (max-width: 640px) {
+  :root { --row-height: 160px; --gap: 4px; }
+  .site-header, .site-footer, main { padding: 0 .75rem; }
+  .site-header { padding-top: 1rem; padding-bottom: 1rem; }
+}
+
+/* Lightbox */
+.lb {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  background: rgba(10, 10, 10, .96);
+  color: #eee;
+}
+.lb::backdrop { background: rgba(10, 10, 10, .96); }
+.lb-figure {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem 1rem;
+}
+.lb-figure img { max-width: 100%; max-height: calc(100dvh - 6rem); width: auto; height: auto; object-fit: contain; }
+.lb-caption { min-height: 1.5rem; margin-top: .75rem; font-size: .85rem; color: #aaa; text-align: center; }
+.lb button {
+  position: absolute;
+  background: none;
+  border: 0;
+  color: #ccc;
+  font-size: 2rem;
+  line-height: 1;
+  padding: 1rem;
+  cursor: pointer;
+}
+.lb button:hover, .lb button:focus-visible { color: #fff; }
+.lb-close { top: 0; right: 0; }
+.lb-prev { left: 0; top: 50%; transform: translateY(-50%); }
+.lb-next { right: 0; top: 50%; transform: translateY(-50%); }
+.lb-count { position: absolute; top: 1.1rem; left: 1.25rem; font-size: .85rem; color: #888; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile img { transition: none; }
+}

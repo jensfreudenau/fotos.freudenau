@@ -1,0 +1,19 @@
+{{- /* Grid of cards for a list of pages (albums or sections). */ -}}
+<ul class="cards">
+  {{ range . }}
+    <li class="card">
+      <a href="{{ .RelPermalink }}">
+        {{ with partial "cover.html" . }}
+          {{ $t := .Process (printf "fill 800x600 Smart webp q%d" site.Params.quality) }}
+          <img src="{{ $t.RelPermalink }}" width="{{ $t.Width }}" height="{{ $t.Height }}" alt="" loading="lazy" decoding="async">
+        {{ else }}
+          <div class="card-empty"></div>
+        {{ end }}
+        <span class="card-title">{{ .Title }}</span>
+        <span class="card-meta">
+          {{ if .IsPage }}{{ len (.Resources.ByType "image") }} Fotos{{ else }}{{ len .RegularPagesRecursive }} Alben{{ end }}
+        </span>
+      </a>
+    </li>
+  {{ end }}
+</ul>

@@ -1,0 +1,11 @@
+/public/
+/resources/_gen/
+.hugo_build.lock
+.DS_Store
+.deploy.env
+content/**/*.jpg
+content/**/*.jpeg
+content/**/*.JPG
+content/**/*.JPEG
+content/**/*.png
+content/**/*.heic
