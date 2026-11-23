@@ -4,3 +4,4 @@ description: "Tiergarten, Sanssouci und andere Parks in Berlin und Potsdam."
 cover: "content/parks/sanssouci/Strohrolle.jpg"
 ---
 Tiergarten, Sanssouci und andere Parks, zu allen Jahreszeiten.
+cover: "content/parks/sanssouci/Strohrolle.jpg"
